@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Users</title>
+</head>
+<body>
+  <h2>All Users</h2>
+  <table border="1" id="userTable">
+    <thead>
+      <tr>
+        <th>Name</th><th>Email</th><th>Age</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p><a href="/form">Add Another User</a></p>
+  <p><a href="/">Back to Home</a></p>
+
+  <script>
+    async function loadUsers() {
+      const res = await fetch('/users');
+      const users = await res.json();
+      const tbody = document.querySelector('#userTable tbody');
+      tbody.innerHTML = '';
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.age}</td>
+          <td><button onclick="deleteUser('${user._id}')">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function deleteUser(id) {
+      if (confirm('Are you sure?')) {
+        const res = await fetch('/api/users/' + id, { method: 'DELETE' });
+        if (res.ok) loadUsers();
+      }
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>

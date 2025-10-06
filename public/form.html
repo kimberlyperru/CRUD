@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add User</title>
+</head>
+<body>
+  <h2>Add New User</h2>
+  <form id="userForm">
+    <label>Name:</label>
+    <input type="text" name="name" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" required><br><br>
+
+    <label>Age:</label>
+    <input type="number" name="age" required><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <p><a href="/">Back to Home</a></p>
+    <p><a href="/users-page">View All Users</a></p>
+
+  <script>
+    document.getElementById('userForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(e.target));
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert(' User added successfully!');
+        window.location.href = '/users-page'; // go to user list
+      } else {
+        alert('❌ Error: ' + result.message);
+      }
+    });
+  </script>
+</body>
+</html>
