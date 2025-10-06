@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Add User</title>
 </head>
 <body>
-  <h2>Add New User</h2>
+  <h2>Add User</h2>
   <form id="userForm">
-    <label>Name:</label>
-    <input type="text" name="name" required><br><br>
-
-    <label>Email:</label>
-    <input type="email" name="email" required><br><br>
-
-    <label>Age:</label>
-    <input type="number" name="age" required><br><br>
-
+    <input type="text" id="name" placeholder="Name" required /><br />
+    <input type="email" id="email" placeholder="Email" required /><br />
+    <input type="number" id="age" placeholder="Age" required /><br />
     <button type="submit">Submit</button>
   </form>
 
-  <p><a href="/">Back to Home</a></p>
-    <p><a href="/users-page">View All Users</a></p>
+  <p id="message"></p>
 
   <script>
-    document.getElementById('userForm').addEventListener('submit', async (e) => {
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const formData = Object.fromEntries(new FormData(e.target));
-      const response = await fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      const result = await response.json();
-      if (response.ok) {
-        alert(' User added successfully!');
-        window.location.href = '/users-page'; // go to user list
-      } else {
-        alert('❌ Error: ' + result.message);
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const age = document.getElementById("age").value;
+      const message = document.getElementById("message");
+
+      try {
+        const res = await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, age })
+        });
+
+        if (res.ok) {
+          message.textContent = "✅ User added successfully!";
+          message.style.color = "green";
+          document.getElementById("userForm").reset();
+        } else {
+          message.textContent = "❌ Failed to add user.";
+          message.style.color = "red";
+        }
+      } catch (error) {
+        console.error(error);
+        message.textContent = "⚠️ Error submitting form.";
+        message.style.color = "red";
       }
     });
   </script>
